@@ -1,36 +1,51 @@
 import {Component, For} from "solid-js";
+import NavigationButton from "./NavigationButton";
 
 
 interface ShoppingListProps {
     desiredItems: string[]
-    collectdItems: string[]
+    collectedItems: string[]
     checkItem: (itemName: string) => void
     uncheckItem: (itemName: string) => void
     goBackToCreateShoppingList: () => void
 }
 
 const ShoppingList: Component<ShoppingListProps> = (props: ShoppingListProps) => {
+
+    const remainingItems = (): string[] =>
+        props.desiredItems.filter(item => !props.collectedItems.includes(item))
+
     return (
         <>
             <h1>Shopping list</h1>
-            <ol id="unchecked-items">
-                <For each={props.desiredItems.filter(item => !props.collectdItems.includes(item))}>
-                    {(item: string) => <ShoppingListItem
-                        item={item}
-                        checked={false}
-                        toggleChecked={() => props.checkItem(item)}/>}
-                </For>
-            </ol>
-            <hr/>
-            <ol id="checked-items">
-                <For each={props.desiredItems.filter(item => props.collectdItems.includes(item))}>
-                    {item => <ShoppingListItem
-                        item={item}
-                        checked={true}
-                        toggleChecked={() => props.uncheckItem(item)}/>}
-                </For>
-            </ol>
-            <button onClick={props.goBackToCreateShoppingList}>Back to create shopping list</button>
+            {remainingItems().length === 0
+                ? <h2 class="finished-shopping">You've got everything!</h2>
+                : <ol id="unchecked-items">
+                    <For each={remainingItems()}>
+                        {(item: string) => <ShoppingListItem
+                            item={item}
+                            checked={false}
+                            toggleChecked={() => props.checkItem(item)}/>}
+                    </For>
+                </ol>}
+            {props.collectedItems.length > 0 &&
+                <details class="collected-items">
+                    <summary>Collected ({props.collectedItems.length} items)</summary>
+                    <ol id="checked-items">
+                        <For each={props.desiredItems.filter(item => props.collectedItems.includes(item))}>
+                            {item => <ShoppingListItem
+                                item={item}
+                                checked={true}
+                                toggleChecked={() => props.uncheckItem(item)}/>}
+                        </For>
+                    </ol>
+                </details>
+            }
+            <NavigationButton
+                text={'Create shopping list'}
+                direction={'back'}
+                goToPage={props.goBackToCreateShoppingList}
+            />
         </>
     );
 }
@@ -42,10 +57,10 @@ interface ShoppingListItemProps {
 }
 
 const ShoppingListItem: Component<ShoppingListItemProps> = (props: ShoppingListItemProps) =>
-    <li class="shopping-list-item">
+    <li class="all-items-item">
+        {props.item}
         <input type="checkbox" checked={props.checked}
                onChange={() => props.toggleChecked(props.item)}/>
-        {props.item}
     </li>
 
 export default ShoppingList

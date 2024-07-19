@@ -5,12 +5,12 @@ import * as storage from "./storage";
 import './styles.css'
 import CreateShoppingList from "./CreateShoppingList";
 import ShoppingList from "./ShoppingList";
-import AllItems from "./AllItems";
+import Catalogue from "./Catalogue";
 
-type State = 'allItems' | 'createShoppingList' | 'shopping'
+type Page = 'catalogue' | 'createShoppingList' | 'shopping'
 
 const Home: Component = () => {
-    const [state, setState] = createSignal<State>('allItems')
+    const [page, setPage] = createSignal<Page>('catalogue')
     const [allItems, setAllItems] = createSignal<types.AllItems>([])
     const [desiredItems, setDesiredItems] = createSignal<string[]>([])
     const [collectedItems, setCollectedItems] = createSignal<string[]>([])
@@ -20,11 +20,11 @@ const Home: Component = () => {
         setAllItems(allItems1)
     })
 
-    const addItemToAllItems = (item: string): void => {
+    const addItemToCatalogue = (item: string): void => {
         setAllItems(() => storage.addItem(item))
     }
 
-    const removeItemFromAllItems = (itemToRemove: string): void => {
+    const removeItemFromCatalogue = (itemToRemove: string): void => {
         setAllItems(() => storage.removeItem(itemToRemove))
         setDesiredItems(current => current.filter(i => i !== itemToRemove))
         setCollectedItems(current => current.filter(i => i !== itemToRemove))
@@ -47,14 +47,17 @@ const Home: Component = () => {
         setCollectedItems(current => current.filter(i => i !== itemName))
     }
 
+    const goTo = (page: Page): (() => void) => () => setPage(page)
+
+
     return <>{((): JSX.Element => {
-        switch (state()) {
-            case 'allItems':
-                return <AllItems
-                    allItems={allItems()}
-                    addItem={addItemToAllItems}
-                    removeItem={removeItemFromAllItems}
-                    goToCreateShoppingList={() => setState('createShoppingList')}
+        switch (page()) {
+            case 'catalogue':
+                return <Catalogue
+                    items={allItems()}
+                    addItem={addItemToCatalogue}
+                    removeItem={removeItemFromCatalogue}
+                    goToCreateShoppingList={goTo('createShoppingList')}
                 />
 
             case 'createShoppingList':
@@ -63,16 +66,16 @@ const Home: Component = () => {
                     desiredItems={desiredItems()}
                     addDesiredItem={addDesiredItem}
                     removeDesiredItem={removeDesiredItem}
-                    goBackToAllItems={() => setState('allItems')}
-                    goToStartShopping={() => setState('shopping')}
+                    goBackToCatalogue={goTo('catalogue')}
+                    goToStartShopping={goTo('shopping')}
                 />
             case 'shopping':
                 return <ShoppingList
                     desiredItems={desiredItems()}
-                    collectdItems={collectedItems()}
+                    collectedItems={collectedItems()}
                     checkItem={collectShoppingListItem}
                     uncheckItem={uncollectShoppingListItem}
-                    goBackToCreateShoppingList={() => setState('createShoppingList')}/>
+                    goBackToCreateShoppingList={goTo('createShoppingList')}/>
         }
     })()}</>
 

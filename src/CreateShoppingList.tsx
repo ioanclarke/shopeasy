@@ -1,12 +1,12 @@
 import {Component, For} from "solid-js";
-
+import NavigationButton from "./NavigationButton";
 
 interface CreateShoppingListProps {
     availableItems: string[]
     desiredItems: string[]
     addDesiredItem: (itemName: string) => void
     removeDesiredItem: (itemName: string) => void
-    goBackToAllItems: () => void
+    goBackToCatalogue: () => void
     goToStartShopping: () => void
 }
 
@@ -27,10 +27,10 @@ const CreateShoppingList: Component<CreateShoppingListProps> = (props: CreateSho
             <h1>Create shopping list</h1>
             <ol>
                 <For each={props.availableItems}>
-                    {availableItem => <li>
+                    {availableItem => <li class="all-items-item">
+                        {availableItem}
                         <input type="checkbox" checked={props.desiredItems.includes(availableItem)}
                                onChange={event => toggleDesired(availableItem, event)}/>
-                        {availableItem}
 
                     </li>}
                 </For>
@@ -41,22 +41,22 @@ const CreateShoppingList: Component<CreateShoppingListProps> = (props: CreateSho
                     {item => <li>{item}</li>}
                 </For>
             </ol>
-            <button onClick={props.goToStartShopping}>Start shopping</button>
-            <button onClick={props.goBackToAllItems}>Back to all items</button>
+            <NavigationButton
+                text={'Start shopping'}
+                direction={'forward'}
+                goToPage={props.goToStartShopping}
+            />
+            <NavigationButton
+                text={'Catalogue'}
+                direction={'back'}
+                goToPage={props.goBackToCatalogue}
+            />
+
+
+            {/*<button onClick={props.goToStartShopping}>Start shopping</button>*/}
+            {/*<button onClick={props.goBackToCatalogue}>Back to all items</button>*/}
         </>
     );
 }
-
-// interface ShoppingListItemProps {
-//     item: types.ShoppingListItem
-//     toggleChecked: (itemName: string, event: any) => void
-// }
-//
-// const ShoppingListItem: Component = (props: ShoppingListItemProps) =>
-//     <li class="shopping-list-item">
-//         <input type="checkbox" checked={props.item.checked}
-//                onChange={event => props.toggleChecked(props.item, event)}/>
-//         {props.item}
-//     </li>
 
 export default CreateShoppingList
