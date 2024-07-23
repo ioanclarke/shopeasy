@@ -6,7 +6,8 @@
     "start": "vite",
     "dev": "vite",
     "build": "vite build",
-    "serve": "vite preview"
+    "serve": "vite preview",
+    "push": "git add . && git commit && git push"
   },
   "license": "MIT",
   "devDependencies": {
