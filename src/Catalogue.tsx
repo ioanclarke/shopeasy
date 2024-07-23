@@ -13,7 +13,7 @@ const Catalogue: Component<CatalogueProps> = (props: CatalogueProps) => {
     const [newItem, setNewItem] = createSignal<string>('')
 
     const updateNewItem: JSX.InputEventHandler<HTMLInputElement, InputEvent> = (event: InputEvent) => {
-        let value = (event.target as HTMLInputElement).value;
+        let value = (event.target as HTMLInputElement).value.toLowerCase();
         setNewItem(value)
     }
 
@@ -35,7 +35,7 @@ const Catalogue: Component<CatalogueProps> = (props: CatalogueProps) => {
                         <li class="all-items-item">{item}
                             <img
                                 src={Cross}
-                                class="remove-"
+                                class="remove-item"
                                 style="height:15px;"
                                 onClick={() => props.removeItem(item)}
                                 alt="delete-item"
