@@ -4,6 +4,7 @@ import checker from "vite-plugin-checker";
 // import devtools from 'solid-devtools/vite';
 
 export default defineConfig({
+    base: "",
     plugins: [
         /*
         Uncomment the following line to enable solid-devtools.
